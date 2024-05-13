@@ -31,9 +31,10 @@ class Logger(object):
     def write(self, message):
         self.terminal.write(message)
         self.log.write(message)
+        self.log.flush()
 
     def flush(self):
-        pass    
+        self.log.flush()
 
 
 
@@ -138,6 +139,7 @@ def expmon_submit_file(sample_path, dump_raw_logs = False):
             if dump_raw_logs:
                 folder_pathname_env = os.path.join(folder_pathname, env_name)
                 os.makedirs(folder_pathname_env)
+                
 
             
             for log_type in file_analysis_logs[env_name]:
@@ -306,7 +308,9 @@ for sample_path in sample_list:
         try:
             expmon_submit_file(sample_path, args.dump_raw_logs)
             break
-        except:
+        except Exception as e:
+            print("[ERROR] %s" % str(e))
+            
             try_count = try_count + 1
             if try_count > 5:
                 print("ERROR IN expmon_submit_file()")
